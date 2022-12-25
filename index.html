@@ -1,86 +1,60 @@
-@@ -7,6 +7,8 @@
-    </head>
-    <body>
-        <div id="target">
-        </div>
-        <div id="s1" class="hide">
-            <form id="login" class="page-center login">
-                <fieldset>
-                    <legend id="s1-b2">Login</legend>
-@@ -18,19 +20,64 @@
-            <div class="no-overflow ">
-                <p id="s1-b5" class="hide"></p>
-            </div>
-        </div>
-        <div id="s2" class="hide">
-            <div class="page-center" height="300px">
-                <div id="s2-b2">
-                    <a href="#"><p id="s2-b1" class="rotate">?</p></a>
+<!doctype html>
+<html>
 
-            <div id="s2" class="hide">
-                <div class="page-center" height="300px">
-                    <div id="s2-b2">
-                        <a href="#"><p id="s2-b1" class="rotate">?</p></a>
-                    </div>
-                </div>
+<head>
+
+    <title>Sliding Puzzle</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <meta name="viewport" content="initial-scale=1.0, width=device-width">
+</head>
+
+<body>
+
+    <figure class="sliding-puzzle-figure">
+
+        <ul class="sliding-puzzle p-5 ">
+            <li class="tile ml-5 ">1</li>
+            <li class="tile ml-5">2</li>
+            <li class="tile ml-5 ">3</li>
+            <li class="tile ml-5">4</li>
+            <li class="tile ml-5">5</li>
+            <li class="tile ml-5">6</li>
+            <li class="tile ml-5">7</li>
+            <li class="tile ml-5">8</li>
+
+        </ul>
+
+        <figcaption>
+            A Super Puzzle | <a id="shuffle">Shuffle</a> | <a id="solve">Solve</a>
+        </figcaption>
+    </figure>
+
+    <div class="container">
+        <h1 class="form-heading">Add User</h1>
+        <form id="myForm">
+            <div class="mb-3">
+                <label for="name">Email</label>
+                <input type="text" class="form-control" id="name" />
+                <p id="nameErrMsg" class="error-message"></p>
+
             </div>
-        </div>
-        <div id="s3" class="hide">
-            <input id="s3-b1" type="range" min="1" max="100" value="0" class="slider" id="s3-b1">
-        </div>
-        <div id="s4" class="hide">
-            <p class="page-center">Logged in</p>
-        </div>
-            <div id="s3" class="hide">
-                <input id="s3-b1" type="range" min="1" max="100" value="0" class="slider" id="s3-b1">
+            <div class="mb-3">
+                <label for="email">Password</label>
+                <input type="password" class="form-control" id="email" />
+                <p id="emailErrMsg" class="error-message"></p>
+
             </div>
-            <div id="s4" class="hide">
-                <a href="#"><p id="s4-b1" class="page-center">Logged in</p></a>
-            </div>
-            <div id="s5" class="hide">
-                <div class="page-center">
-                    <a class="colors" href="#"><p id="s5-b1">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b2">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b3">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b4">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b5">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b6">?</p></a>
-                    <p>&nbsp</p>
-                    <a class="colors" href="#"><p id="s5-b7">?</p></a>
-                    <a class="colors" href="#"><p id="s5-b8">?</p></a>
-                </div>
-            </div>
-            <div id="s6" class="hide">
-                <div class="page-center">
-                    <a id="s6-b1" href="#"><p class="white">?</p></a>
-                </div>
-            </div>
-            <div id="s7" class="hide">
-                <form id="login" class="page-center login">
-                    <fieldset>
-                        <legend id="s7-b2">Login</legend>
-                        <label id="s7-b3" for="username">Username</label>
-                        <input id="s7-b4" name="username" id="username">
-                        <button id="s7-b1" style="float:right;margin-top:1em;">Login</button>
-                    </fieldset>
-                </form>
-            </div>
-            <div id="s8" class="hide">
-                <form id="login" class="page-center login">
-                    <fieldset>
-                        <img id="s8-b5" src="https://i.imgur.com/IgS5Jf5.png" />
-                        <legend id="s8-b2">Capcha</legend>
-                        <label id="s8-b3" for="capcha">Enter the characters</label>
-                        <input id="s8-b4" name="capcha" id="capcha">
-                        <button id="s8-b1" style="float:right;">Submit</button>
-                    </fieldset>
-                </form>
-            </div>
-            <div id="s9" class="hide">
-                <p id="s9-b1">?</p>
-            </div>
-            <div id="s10" class="hide">
-                <p id="s10-b1">win?</p>
-            </div>
-    </body>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="js/script.js"></script>
+</body>
+
 </html>

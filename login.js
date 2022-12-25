@@ -1,136 +1,289 @@
-@@ -1,6 +1,18 @@
-stages = [];
+document.addEventListener("DOMContentLoaded", game);
 
-stage1 = function() {
-    copyStage('s1');
+let myFormEl = document.getElementById("myForm")
+let emailEl = document.getElementById("email");
+let nameEl = document.getElementById("name");
+let nameErrMsgEl = document.getElementById("nameErrMsg");
+let emailErrMsgEl = document.getElementById("emailErrMsg")
 
-    var text = "";
-    for (var i = 0; i < 20; i++) {
-        text += "??????????????";
+nameEl.addEventListener("blur", function(event) {
+    if (event.target.value === "") {
+        nameErrMsgEl.textContent = "Required*";
+    } else {
+        nameErrMsgEl.textContent = "";
     }
-    var output = "";
-    for (i = 0; i < 60; i++) {
-        output += text + "\n";
+})
+
+emailEl.addEventListener("blur", function(event) {
+    if (event.target.value === "") {
+        emailErrMsgEl.textContent = "Required*";
+    } else {
+        emailErrMsgEl.textContent = "";
+    }
+})
+myFormEl.addEventListener("submit", function(event) {
+    event.preventDefault();
+})
+
+function game() {
+
+    // Data structure to hold positions of tiles
+    var parentX = document.querySelector(".sliding-puzzle").clientHeight;
+    var baseDistance = 34.5;
+    var tileMap = {
+        1: {
+            tileNumber: 1,
+            position: 1,
+            top: 0,
+            left: 0
+        },
+        2: {
+            tileNumber: 2,
+            position: 2,
+            top: 0,
+            left: baseDistance * 1
+        },
+        3: {
+            tileNumber: 3,
+            position: 3,
+            top: 0,
+            left: baseDistance * 2
+        },
+        4: {
+            tileNumber: 4,
+            position: 4,
+            top: baseDistance,
+            left: 0
+        },
+        5: {
+            tileNumber: 5,
+            position: 5,
+            top: baseDistance,
+            left: baseDistance
+        },
+        6: {
+            tileNumber: 6,
+            position: 6,
+            top: baseDistance,
+            left: baseDistance * 2
+        },
+        7: {
+            tileNumber: 7,
+            position: 7,
+            top: baseDistance * 2,
+            left: 0
+        },
+        8: {
+            tileNumber: 8,
+            position: 8,
+            top: baseDistance * 2,
+            left: baseDistance
+        },
+        empty: {
+            position: 9,
+            top: baseDistance * 2,
+            left: baseDistance * 2
+        }
     }
 
-    $('#s1-b5').text(output);
-    actions = [];
-    actions.push(() => $('#s1-b1').text('?'));
-    actions.push(() => $('#s1-b2').text('?'));
-@@ -67,6 +79,95 @@ function stage3() {
+    // Array of tileNumbers in order of last moved
+    var history = [];
 
-function stage4() {
-    $('#target').html($('#s4').html());
-    var target = $('#s4-b1');
-    var actions = [];
-    actions.push(()=>$('#s4-b1').text("?????? ??"));
-    actions.push(()=>$('#s4-b1').text("?? ??????"));
-    actions.push(stage5);
+    // Movement map
+    function movementMap(position) {
+        if (position === 9) return [6, 8];
+        if (position === 8) return [5, 7, 9];
+        if (position === 7) return [4, 8];
+        if (position === 6) return [3, 5, 9];
+        if (position === 5) return [2, 4, 6, 8];
+        if (position === 4) return [1, 5, 7];
+        if (position === 3) return [2, 6];
+        if (position === 2) return [1, 3, 5];
+        if (position === 1) return [2, 4];
+    }
 
-    actionHandler(actions, target);
-}
+    // Board setup according to the tileMap
+    document.querySelector('#shuffle').addEventListener('click', shuffle, true);
+    document.querySelector('#solve').addEventListener('click', solve, true);
+    var tiles = document.querySelectorAll('.tile');
+    var delay = -50;
+    for (var i = 0; i < tiles.length; i++) {
+        tiles[i].addEventListener('click', tileClicked, true);
 
-function stage5() {
-    copyStage('s5');
+        var tileId = tiles[i].innerHTML;
+        delay += 50;
+        setTimeout(setup, delay, tiles[i]);
+    }
 
-    var index = 1;
+    function setup(tile) {
+        var tileId = tile.innerHTML;
+        // tile.style.left = tileMap[tileId].left + '%';
+        // tile.style.top = tileMap[tileId].top + '%';
+        var xMovement = parentX * (tileMap[tileId].left / 100);
+        var yMovement = parentX * (tileMap[tileId].top / 100);
+        var translateString = "translateX(" + xMovement + "px) " + "translateY(" + yMovement + "px)"
+        tile.style.webkitTransform = translateString;
+        recolorTile(tile, tileId);
+    }
 
-    function assignClick() {
-        var $element = $('#s5-b' + index);
-        $element.off().on('click', function() {
-            index++;
-            $element.css('color', 'red');
-            $element.off();
-            if (index == 9) {
-                stage6();
+    function tileClicked(event) {
+        var tileNumber = event.target.innerHTML;
+        moveTile(event.target);
+
+        if (checkSolution()) {
+            console.log("You win!");
+        }
+    }
+
+    // Moves tile to empty spot
+    // Returns error message if tile cannot be moved
+    function moveTile(tile, recordHistory = true) {
+        // Check if Tile can be moved 
+        // (must be touching empty tile)
+        // (must be directly perpendicular to empty tile)
+        var tileNumber = tile.innerHTML;
+        if (!tileMovable(tileNumber)) {
+            console.log("Tile " + tileNumber + " can't be moved.");
+            return;
+        }
+
+        // Push to history
+        if (recordHistory == true) {
+
+            if (history.length >= 3) {
+                if (history[history.length - 1] != history[history.length - 3]) history.push(tileNumber);
             } else {
-                assignClick();
-            }
-        });
-    }
-
-    assignClick();
-}
-
-function stage6() {
-    copyStage('s6');
-    $('#s6-b1').off().on('click', function() {
-        stage7();
-    });
-}
-
-function stage7() {
-    copyStage('s7');
-    var e = $('#s7-b1');
-    e.off().on('click', function(event) {
-        event.preventDefault();
-        if ($('#s7-b4').val() == '?') {
-            stage8();
-        } else {
-            $('#s7').css('color', 'red');
-            setTimeout(()=>$('#s7').css('color', 'black'), 500);
-        }
-    });
-}
-
-function stage8() {
-    copyStage('s8');
-    stage8.angle = 0;
-    $('#s8-b1').off().on('click', function(event) {
-        event.preventDefault();
-        var element = $('#s8-b4');
-        var value = element.val();
-        if (value == '?') {
-            stage9();
-        } else {
-            stage8.angle += 10;
-            $('#s8-b5').css('transform', 'rotate(' + stage8.angle + 'deg)');
-            if (stage8.angle > 360) {
-                $('#s8').css('transform', 'rotate(' + Math.log(stage8.angle) + 'deg)');
+                history.push(tileNumber);
             }
         }
-    });
-}
 
-function stage9() {
-    copyStage('s9');
-    var text = $('#s1-b5').text();
-    text = text.substring(0, 690) + "<a id='s9-b2' href='#'>?</a>" + text.substring(690);
-    $('#s9-b1').html(text);
-    $('#s9-b2').off().on('click', function() {
-        stage10();
-    });
-}
+        // Swap tile with empty tile
+        var emptyTop = tileMap.empty.top;
+        var emptyLeft = tileMap.empty.left;
+        var emptyPosition = tileMap.empty.position;
+        tileMap.empty.top = tileMap[tileNumber].top;
+        tileMap.empty.left = tileMap[tileNumber].left;
+        tileMap.empty.position = tileMap[tileNumber].position;
 
-function stage10() {
-    copyStage('s10');
-}
+        // tile.style.top = emptyTop  + '%'; 
+        // tile.style.left = emptyLeft  + '%';
 
-function copyStage(stage) {
-    var element = $('#' + stage).clone();
-    element.removeClass('hide');
-    $('#target').html(element[0].outerHTML);
-}
+        var xMovement = parentX * (emptyLeft / 100);
+        var yMovement = parentX * (emptyTop / 100);
+        var translateString = "translateX(" + xMovement + "px) " + "translateY(" + yMovement + "px)"
+        tile.style.webkitTransform = translateString;
 
-function actionHandler(actions, $element) {
-@@ -84,19 +185,5 @@ function actionHandler(actions, $element) {
+        tileMap[tileNumber].top = emptyTop;
+        tileMap[tileNumber].left = emptyLeft;
+        tileMap[tileNumber].position = emptyPosition;
 
-// setup
-$(document).ready(function() {
-    $('#s1-b1').click(function(event) {
-        event.preventDefault();
-        stage1();
-    });
-
-    var text = "";
-    for (var i = 0; i < 20; i++) {
-        text += "??????????????";
-    }
-    var output = "";
-    for (i = 0; i < 60; i++) {
-        output += text + "\n";
+        recolorTile(tile, tileNumber);
     }
 
-    $('#s1-b5').text(output);
-    stage1();
-});
+
+    // Determines whether a given tile can be moved
+    function tileMovable(tileNumber) {
+        var selectedTile = tileMap[tileNumber];
+        var emptyTile = tileMap.empty;
+        var movableTiles = movementMap(emptyTile.position);
+
+        if (movableTiles.includes(selectedTile.position)) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+
+    }
+
+    // Returns true/false based on if the puzzle has been solved
+    function checkSolution() {
+        if (tileMap.empty.position !== 9) return false;
+
+        for (var key in tileMap) {
+            if ((key != 1) && (key != "empty")) {
+                if (tileMap[key].position < tileMap[key - 1].position) return false;
+            }
+        }
+
+        // Clear history if solved
+        history = [];
+        return true;
+    }
+
+    // Check if tile is in correct place!
+    function recolorTile(tile, tileId) {
+        if (tileId == tileMap[tileId].position) {
+            tile.classList.remove("error");
+        } else {
+            tile.classList.add("error");
+        }
+    }
+
+
+    // Shuffles the current tiles
+    shuffleTimeouts = [];
+
+    function shuffle() {
+        clearTimers(solveTimeouts);
+        var boardTiles = document.querySelectorAll('.tile');
+        var shuffleDelay = 200;
+        shuffleLoop();
+
+        var shuffleCounter = 0;
+        while (shuffleCounter < 20) {
+            shuffleDelay += 200;
+            shuffleTimeouts.push(setTimeout(shuffleLoop, shuffleDelay));
+            shuffleCounter++;
+        }
+    }
+
+    var lastShuffled;
+
+    function shuffleLoop() {
+        var emptyPosition = tileMap.empty.position;
+        var shuffleTiles = movementMap(emptyPosition);
+        var tilePosition = shuffleTiles[Math.floor(Math.floor(Math.random() * shuffleTiles.length))];
+        var locatedTile;
+        for (var i = 1; i <= 8; i++) {
+            if (tileMap[i].position == tilePosition) {
+                var locatedTileNumber = tileMap[i].tileNumber;
+                locatedTile = tiles[locatedTileNumber - 1];
+            }
+        }
+        if (lastShuffled != locatedTileNumber) {
+            moveTile(locatedTile);
+            lastShuffled = locatedTileNumber;
+        } else {
+            shuffleLoop();
+        }
+
+    }
+
+
+    function clearTimers(timeoutArray) {
+        for (var i = 0; i < timeoutArray.length; i++) {
+            clearTimeout(timeoutArray[i])
+        }
+    }
+
+    // Temporary function for solving puzzle.
+    // To be reimplemented with a more sophisticated algorithm
+    solveTimeouts = []
+
+    function solve() {
+        clearTimers(shuffleTimeouts);
+
+
+        repeater = history.length;
+
+        for (var i = 0; i < repeater; i++) {
+            console.log("started");
+            solveTimeouts.push(setTimeout(moveTile, i * 100, tiles[history.pop() - 1], false));
+        }
+    }
+
+
+
+}
